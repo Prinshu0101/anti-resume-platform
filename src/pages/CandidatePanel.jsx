@@ -1,80 +1,58 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from 'react';
 
 const challenges = [
   {
-    id: 1,
-    title: "Frontend Design Challenge",
-    description: "Design a responsive landing page for a startup.",
+    title: 'Frontend Design Challenge',
+    description: 'Design a responsive landing page for a startup.',
   },
   {
-    id: 2,
-    title: "Backend API Challenge",
-    description: "Build a REST API for a job board with Node.js.",
+    title: 'Backend API Challenge',
+    description: 'Build a REST API for a job board with Node.js.',
   },
   {
-    id: 3,
-    title: "Data Analysis Task",
-    description: "Analyze hiring trends using a given CSV dataset.",
+    title: 'Data Analysis Task',
+    description: 'Analyze hiring trends using a given CSV dataset.',
   },
 ];
 
 const CandidatePanel = () => {
-  const [selectedChallenge, setSelectedChallenge] = useState(null);
-  const [submissionText, setSubmissionText] = useState("");
+  const [submissions, setSubmissions] = useState(() => {
+    const stored = localStorage.getItem('candidateSubmissions');
+    return stored ? JSON.parse(stored) : {};
+  });
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    alert(`Submitted for "${selectedChallenge.title}":\n${submissionText}`);
-    setSelectedChallenge(null);
-    setSubmissionText("");
+  const handleSubmit = (challenge) => {
+    const link = prompt(`Submit your link for "${challenge.title}":`);
+    if (link && link.startsWith('http')) {
+      const updated = { ...submissions, [challenge.title]: link };
+      setSubmissions(updated);
+      localStorage.setItem('candidateSubmissions', JSON.stringify(updated));
+      alert(`Submitted for "${challenge.title}": ${link}`);
+    } else {
+      alert('Please enter a valid link starting with http/https.');
+    }
   };
 
   return (
-    <div className="min-h-screen p-8 bg-white">
-      <h1 className="text-3xl font-bold mb-6">Available Challenges</h1>
-
-      {selectedChallenge ? (
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <h2 className="text-xl font-semibold">{selectedChallenge.title}</h2>
-          <p>{selectedChallenge.description}</p>
-          <textarea
-            value={submissionText}
-            onChange={(e) => setSubmissionText(e.target.value)}
-            placeholder="Paste your GitHub repo URL or code snippet..."
-            className="w-full p-2 border border-gray-300 rounded"
-            rows={4}
-            required
-          />
-          <div className="space-x-2">
-            <button
-              type="submit"
-              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-            >
-              Submit
-            </button>
-            <button
-              type="button"
-              onClick={() => setSelectedChallenge(null)}
-              className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
-            >
-              Cancel
-            </button>
-          </div>
-        </form>
-      ) : (
-        <div className="grid gap-6">
-          {challenges.map((challenge) => (
-            <div
-              key={challenge.id}
-              className="p-4 border rounded-xl hover:shadow transition cursor-pointer"
-              onClick={() => setSelectedChallenge(challenge)}
-            >
-              <h2 className="text-xl font-semibold">{challenge.title}</h2>
-              <p>{challenge.description}</p>
-            </div>
-          ))}
+    <div className="p-6 max-w-3xl mx-auto">
+      <h2 className="text-2xl font-bold mb-4">Available Challenges</h2>
+      {challenges.map((challenge) => (
+        <div key={challenge.title} className="mb-6 border-b pb-4">
+          <h3 className="text-xl font-semibold">{challenge.title}</h3>
+          <p className="text-gray-700 mb-2">{challenge.description}</p>
+          <button
+            onClick={() => handleSubmit(challenge)}
+            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+          >
+            Submit
+          </button>
+          {submissions[challenge.title] && (
+            <p className="mt-2 text-sm text-green-700">
+              Submitted: <a href={submissions[challenge.title]} className="underline" target="_blank" rel="noreferrer">{submissions[challenge.title]}</a>
+            </p>
+          )}
         </div>
-      )}
+      ))}
     </div>
   );
 };

@@ -1,27 +1,51 @@
-// src/pages/RecruiterPanel.jsx
+import React, { useState, useEffect } from 'react';
 
-import React from "react";
-import { submissions } from "../data/submissions";
+const challenges = [
+  {
+    title: 'Frontend Design Challenge',
+    description: 'Design a responsive landing page for a startup.',
+  },
+  {
+    title: 'Backend API Challenge',
+    description: 'Build a REST API for a job board with Node.js.',
+  },
+  {
+    title: 'Data Analysis Task',
+    description: 'Analyze hiring trends using a given CSV dataset.',
+  },
+];
 
 const RecruiterPanel = () => {
-  return (
-    <div style={{ padding: "2rem" }}>
-      <h1 style={{ fontSize: "2rem", fontWeight: "bold" }}>Submitted Challenges</h1>
+  const [submissions, setSubmissions] = useState({});
 
-      {submissions.length === 0 ? (
-        <p style={{ marginTop: "1rem", color: "gray" }}>No submissions yet.</p>
-      ) : (
-        <ul style={{ marginTop: "1rem" }}>
-          {submissions.map((submission, index) => (
-            <li key={index} style={{ marginBottom: "1.5rem", borderBottom: "1px solid #ccc", paddingBottom: "1rem" }}>
-              <p><strong>Candidate Name:</strong> {submission.name}</p>
-              <p><strong>Challenge:</strong> {submission.challenge}</p>
-              <p><strong>Submission URL:</strong> <a href={submission.url} target="_blank" rel="noopener noreferrer">{submission.url}</a></p>
-              <p><strong>Feedback:</strong> {submission.feedback}</p>
-            </li>
-          ))}
-        </ul>
-      )}
+  useEffect(() => {
+    const stored = localStorage.getItem('candidateSubmissions');
+    if (stored) {
+      setSubmissions(JSON.parse(stored));
+    }
+  }, []);
+
+  return (
+    <div className="p-6 max-w-3xl mx-auto">
+      <h2 className="text-2xl font-bold mb-4">Candidate Submissions</h2>
+      {challenges.map((challenge) => (
+        <div key={challenge.title} className="mb-6 border-b pb-4">
+          <h3 className="text-xl font-semibold">{challenge.title}</h3>
+          <p className="text-gray-700 mb-2">{challenge.description}</p>
+          {submissions[challenge.title] ? (
+            <a
+              href={submissions[challenge.title]}
+              target="_blank"
+              rel="noreferrer"
+              className="text-blue-500 underline"
+            >
+              View Submission
+            </a>
+          ) : (
+            <p className="text-gray-500 italic">No submission yet.</p>
+          )}
+        </div>
+      ))}
     </div>
   );
 };
