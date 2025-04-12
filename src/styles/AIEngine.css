@@ -1,0 +1,23 @@
+.ai-container {
+    max-width: 768px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+  }
+  
+  .ai-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+  }
+  
+  .ai-description {
+    color: #374151; /* Tailwind's gray-700 */
+    margin-bottom: 1rem;
+  }
+  
+  .ai-note {
+    font-size: 0.875rem;
+    color: #6b7280; /* Tailwind's gray-500 */
+    font-style: italic;
+  }
+  
